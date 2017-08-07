@@ -69,20 +69,27 @@ public class HandPosCalibrator : MonoBehaviour {
 					if (!Calibrate ()) {
 						Debug.Log ("Failed to calibrate, restarting");
 						Reset ();
+					} else {
+						CalibPoint.SetCalibrated (true);
 					}
 				}
 				_lastTime = Time.time;
 				_isPinched = true;
 			} else if (Time.time - _lastTime > 3 && _CurrCalibPoint!=0) {
-				Debug.Log ("Resetting");
 				Reset ();
 			}
 		} else {
 			_isPinched = false;
 		}
 
+		if (Input.GetKeyDown (KeyCode.R)) {
+			Reset ();
+		}
+
 		if (IsCalibrated) {
 			point = _regData.GetPoint (_calibPlane.ProjectPoint2D (Position));
+
+			CalibPoint.SetPosition (point);
 		}
 	}
 
@@ -120,8 +127,10 @@ public class HandPosCalibrator : MonoBehaviour {
 
 	public void Reset()
 	{
+		Debug.Log ("Resetting");
 		_regData.Reset ();
 		_CurrCalibPoint = 0;
+		CalibPoint.SetCalibrated (false);
 		CalibPoint.SetPosition (CalibrationPoints [_CurrCalibPoint]);
 		CalibPoint.Pinched ();
 		for (int i = 0; i < CalibrationPoints.Length; ++i) {

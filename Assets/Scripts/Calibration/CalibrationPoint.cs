@@ -18,17 +18,22 @@ public class CalibrationPoint : MonoBehaviour {
 
 	public CalibrationScreenEffect Effect;
 
+	bool _calibrated=false;
+
 	// Use this for initialization
 	void Start () {
 		
 	}
 
-
+	public void SetCalibrated(bool calibrated)
+	{
+		_calibrated = calibrated;
+		Effect.MaxGazeSize = _calibrated ? 0.1f : 0.2f;
+	}
 
 	public void SetPosition(Vector2 pos)
 	{
-		targetState = EState.Show;
-		Effect.SetPosition (pos*0.5f+new Vector2(0.5f,0.5f));
+		Effect.SetPosition (pos*0.5f+new Vector2(0.5f,0.5f),!_calibrated);
 	}
 
 	public void Pinched()

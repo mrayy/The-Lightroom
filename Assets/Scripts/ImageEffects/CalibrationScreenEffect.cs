@@ -34,10 +34,11 @@ public class CalibrationScreenEffect : MonoBehaviour {
 
 	}
 
-	public void SetPosition(Vector2 pos)
+	public void SetPosition(Vector2 pos,bool trigger)
 	{
 		_targetPosition = pos;
-		_sizeTween.position = 2;
+		if(trigger)
+			_sizeTween.position = 2;
 		this.enabled = true;
 	}
 	public void SetTriggered()
