@@ -141,6 +141,7 @@ public class CalibrationPlane
 
 
 //Linear Regression
+//http://machinelearningmastery.com/simple-linear-regression-tutorial-for-machine-learning/
 class Regression2D
 {
 	public Vector2 B0;

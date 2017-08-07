@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
-[ExecuteInEditMode]
 public class CalibrationScreenEffect : MonoBehaviour {
 	private Material material;
 
@@ -11,19 +11,23 @@ public class CalibrationScreenEffect : MonoBehaviour {
 	Flask.DTween _sizeTween=new Flask.DTween(0,5f);
 	Flask.DTweenVector2 _positionTween=new Flask.DTweenVector2(new Vector2(0,0),10);
 
-	public RenderTexture screen;
-
 	Vector2 _targetPosition;
 
 	public float Repeat=10;
 	public float MaxGazeSize=0.2f;
 	public Vector4 pos;
+
+	public RawImage target;
+
+	OffscreenProcessor _renderer;
 	// Use this for initialization
 	void Awake () {
 	}
 
 	void Start()
 	{
+		_renderer = new OffscreenProcessor ();
+		_renderer.ShaderName = "Hidden/CalibrationScreenShader";
 	}
 
 	// Update is called once per frame
@@ -31,7 +35,7 @@ public class CalibrationScreenEffect : MonoBehaviour {
 		_flashTween.Step (0);
 		_sizeTween.Step (1);
 		_positionTween.Step (_targetPosition);
-
+		RenderImage ();
 	}
 
 	public void SetPosition(Vector2 pos,bool trigger)
@@ -47,7 +51,7 @@ public class CalibrationScreenEffect : MonoBehaviour {
 		this.enabled = true;
 	}
 	// Postprocess the image
-	void OnRenderImage (RenderTexture source, RenderTexture destination)
+	void RenderImage ()
 	{
 		if (material == null)
 		{
@@ -56,12 +60,11 @@ public class CalibrationScreenEffect : MonoBehaviour {
 		}
 
 		pos = new Vector4 (_positionTween.position.x, _positionTween.position.y, _flashTween.position, _sizeTween.position*MaxGazeSize);
-
-		material.SetFloat ("_Repeat", Repeat);
-		material.SetVector ("_Position", pos);
-
-		screen = source;
-		Graphics.Blit (source, destination, material);
+		if (_renderer.ProcessingMaterial != null) {
+			_renderer.ProcessingMaterial.SetFloat ("_Repeat", Repeat);
+			_renderer.ProcessingMaterial.SetVector ("_Position", pos);
+		}
+		target.texture= _renderer.ProcessTexture (new Vector2(Screen.width,Screen.height));
 
 		//if (_flashTween.position == 0)
 		//	this.enabled = false;

@@ -1,4 +1,6 @@
-﻿Shader "Hidden/CalibrationScreenShader"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hidden/CalibrationScreenShader"
 {
 	Properties
 	{
@@ -32,7 +34,7 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
 				return o;
 			}
@@ -65,7 +67,7 @@
 				float cut=lerp(0.4,_Position.z,dist);
 
 				v=step(cut,v);
-				col=lerp(float4(0.2,0.2,0.2,1),float4(0.8,0.8,0.8,1),v);
+				col=lerp(float4(0.2,0.2,0.2,0),float4(0.0,0.0,0.0,1),v);
 				return col;
 			}
 			ENDCG

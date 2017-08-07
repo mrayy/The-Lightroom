@@ -19,7 +19,7 @@ public class HandPosCalibrator : MonoBehaviour {
 	public CalibrationPoint CalibPoint;
 
 	public bool UseMouse=false;
-	public PinchDetector Hand;
+	public AbstractHoldDetector Hand;
 	public Vector2 point;//For debugging
 	public Vector3 Pos;//For debugging
 
@@ -30,7 +30,7 @@ public class HandPosCalibrator : MonoBehaviour {
 			if (UseMouse) {
 				return Input.GetMouseButtonDown (0);
 			} else
-				return Hand.IsPinching;
+				return Hand.IsHolding;
 		}
 	}
 	public Vector3 Position {

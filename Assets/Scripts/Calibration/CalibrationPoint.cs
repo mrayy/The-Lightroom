@@ -34,6 +34,8 @@ public class CalibrationPoint : MonoBehaviour {
 	public void SetPosition(Vector2 pos)
 	{
 		Effect.SetPosition (pos*0.5f+new Vector2(0.5f,0.5f),!_calibrated);
+
+		transform.localPosition = new Vector3 (pos.x*Screen.width/2, pos.y*Screen.height/2, 0);
 	}
 
 	public void Pinched()
