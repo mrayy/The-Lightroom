@@ -18,31 +18,56 @@ public class CalibrationScreenEffect : MonoBehaviour {
 	public Vector4 pos;
 
 	public RawImage target;
+	public Texture BGTexture;
 
 	OffscreenProcessor _renderer;
+
+	float _beatingSpeed=1.5f;
+	Coroutine _hearBeatCor;
 	// Use this for initialization
 	void Awake () {
 	}
 
 	void Start()
 	{
+		_flashTween.target = 0;
+		_sizeTween.target = 1;
 		_renderer = new OffscreenProcessor ();
 		_renderer.ShaderName = "Hidden/CalibrationScreenShader";
+
+		_hearBeatCor=StartCoroutine (HeartBeat (_sizeTween));
+
+		//if(_hearBeatCor!=null)
+		//	StopCoroutine (_hearBeatCor);
 	}
 
 	// Update is called once per frame
 	void Update () {
-		_flashTween.Step (0);
-		_sizeTween.Step (1);
-		_positionTween.Step (_targetPosition);
+		_flashTween.Step ();
+		_sizeTween.Step ();
+		_positionTween.Step ();
 		RenderImage ();
+	}
+
+	IEnumerator HeartBeat(Flask.DTween t)
+	{
+		while(true) {
+			t.position = 1.5f;
+			t.target = 1;
+			yield return new WaitForSeconds (_beatingSpeed);
+		}
+
 	}
 
 	public void SetPosition(Vector2 pos,bool trigger)
 	{
 		_targetPosition = pos;
-		if(trigger)
-			_sizeTween.position = 2;
+		_positionTween.target = _targetPosition;
+		if (trigger) {
+			_beatingSpeed = 1;
+		} else {
+			_beatingSpeed = 2;
+		}
 		this.enabled = true;
 	}
 	public void SetTriggered()
@@ -63,6 +88,7 @@ public class CalibrationScreenEffect : MonoBehaviour {
 		if (_renderer.ProcessingMaterial != null) {
 			_renderer.ProcessingMaterial.SetFloat ("_Repeat", Repeat);
 			_renderer.ProcessingMaterial.SetVector ("_Position", pos);
+			_renderer.ProcessingMaterial.SetTexture ("_BGTex", BGTexture);
 		}
 		target.texture= _renderer.ProcessTexture (new Vector2(Screen.width,Screen.height));
 
