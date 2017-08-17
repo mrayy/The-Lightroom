@@ -10,6 +10,8 @@ public class OffAxisProjection : MonoBehaviour {
 	public bool setNearClipPlane = false;
 	public float nearClipDistanceOffset= -0.01f;
 
+	public Vector3 pa,pb,pc;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -23,17 +25,17 @@ public class OffAxisProjection : MonoBehaviour {
 	void LateUpdate() {
 		var cameraComponent = Camera.main;
 		if (null != projectionScreen && null != cameraComponent) {
-			Vector3 pa = 
+			pa = 
 				projectionScreen.transform.TransformPoint (
-					new Vector3 (-5.0f, 0.0f, -5.0f));
+					new Vector3 (-0.5f, -0.5f, 0.0f));
 			// lower left corner in world coordinates
-			Vector3 pb = 
+			pb = 
 				projectionScreen.transform.TransformPoint (
-					new Vector3 (5.0f, 0.0f, -5.0f));
+					new Vector3 (0.5f,-0.5f, 0.0f));
 			// lower right corner
-			Vector3 pc = 
+			pc = 
 				projectionScreen.transform.TransformPoint (
-					new Vector3 (-5.0f, 0.0f, 5.0f));
+					new Vector3 (-0.5f, 0.5f, 0.0f));
 			// upper left corner
 			Vector3 pe = transform.position;
 			// eye position
@@ -57,60 +59,44 @@ public class OffAxisProjection : MonoBehaviour {
 
 			vr = pb - pa;
 			vu = pc - pa;
+			vr.Normalize();
+			vu.Normalize();
+			vn = -Vector3.Cross(vr, vu); 
+			// we need the minus sign because Unity 
+			// uses a left-handed coordinate system
+			vn.Normalize();
+
 			va = pa - pe;
 			vb = pb - pe;
 			vc = pc - pe;
 
-			// are we looking at the backface of the plane object?
-			if (Vector3.Dot (-Vector3.Cross (va, vc), vb) < 0.0f) {
-				// mirror points along the z axis (most users 
-				// probably expect the x axis to stay fixed)
-				vu = -vu;
-				pa = pc;
-				pb = pa + vr;
-				pc = pa + vu;
-				va = pa - pe;
-				vb = pb - pe;
-				vc = pc - pe;
-			}
+			d = -Vector3.Dot(va, vn);
 
-			vr.Normalize ();
-			vu.Normalize ();
-			vn = -Vector3.Cross (vr, vu); 
-			// we need the minus sign because Unity 
-			// uses a left-handed coordinate system
-			vn.Normalize ();
-
-			d = -Vector3.Dot (va, vn);
-			if (setNearClipPlane) {
-				n = d + nearClipDistanceOffset;
-				cameraComponent.nearClipPlane = n;
-			}
-			l = Vector3.Dot (vr, va) * n / d;
-			r = Vector3.Dot (vr, vb) * n / d;
-			b = Vector3.Dot (vu, va) * n / d;
-			t = Vector3.Dot (vu, vc) * n / d;
+			l = Vector3.Dot(vr, va) * n / d;
+			r = Vector3.Dot(vr, vb) * n / d;
+			b = Vector3.Dot(vu, va) * n / d;
+			t = Vector3.Dot(vu, vc) * n / d;
 
 			Matrix4x4 p = Matrix4x4.identity; // projection matrix 
-			p [0, 0] = 2.0f * n / (r - l); 
-			p [0, 1] = 0.0f; 
-			p [0, 2] = (r + l) / (r - l); 
-			p [0, 3] = 0.0f;
+			p[0,0] = 2.0f*n/(r-l); 
+			p[0,1] = 0.0f; 
+			p[0,2] = (r+l)/(r-l); 
+			p[0,3] = 0.0f;
 
-			p [1, 0] = 0.0f; 
-			p [1, 1] = 2.0f * n / (t - b); 
-			p [1, 2] = (t + b) / (t - b); 
-			p [1, 3] = 0.0f;
+			p[1,0] = 0.0f; 
+			p[1,1] = 2.0f*n/(t-b); 
+			p[1,2] = (t+b)/(t-b); 
+			p[1,3] = 0.0f;
 
-			p [2, 0] = 0.0f;         
-			p [2, 1] = 0.0f; 
-			p [2, 2] = (f + n) / (n - f); 
-			p [2, 3] = 2.0f * f * n / (n - f);
+			p[2,0] = 0.0f;         
+			p[2,1] = 0.0f; 
+			p[2,2] = (f+n)/(n-f); 
+			p[2,3] = 2.0f*f*n/(n-f);
 
-			p [3, 0] = 0.0f;         
-			p [3, 1] = 0.0f; 
-			p [3, 2] = -1.0f;        
-			p [3, 3] = 0.0f;		
+			p[3,0] = 0.0f;         
+			p[3,1] = 0.0f; 
+			p[3,2] = -1.0f;        
+			p[3,3] = 0.0f;		
 
 			Matrix4x4 rm = new Matrix4x4 ();// rotation matrix;
 			rm [0, 0] = vr.x; 
