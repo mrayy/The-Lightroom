@@ -11,10 +11,12 @@ public class ImageMozaikEffect : MonoBehaviour {
 	public MeshFilter target;
 	public MeshRenderer targetMtrl;
 
+	public int Repeat=40;
+
 	void Start()
 	{
 
-		target.mesh = MeshGenerator.GeneratePlane (1, 1, 20, 20);
+		target.mesh = MeshGenerator.GeneratePlane (1, 1, Repeat, Repeat);
 		targetMtrl.material = new Material (Shader.Find ("Image/ImageMozaik"));
 	}
 
@@ -27,7 +29,7 @@ public class ImageMozaikEffect : MonoBehaviour {
 	void RenderImage ()
 	{
 		if (targetMtrl.material != null) {
-			targetMtrl.material.SetFloat ("_Repeat", 20);
+			targetMtrl.material.SetFloat ("_Repeat", Repeat);
 			targetMtrl.material.SetTexture ("MainTex", BGTexture.BlitImage);
 			targetMtrl.material.mainTexture = BGTexture.BlitImage;
 		}

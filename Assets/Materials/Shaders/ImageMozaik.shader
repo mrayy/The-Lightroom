@@ -41,8 +41,8 @@ Shader "Image/ImageMozaik"
 			v2f vert (appdata v)
 			{
 				v2f o;
-				float4 col=tex2Dlod(_MainTex,float4(v.uv,0,1));
-				v.vertex.y=col.r*0.1; 
+				float4 col=tex2Dlod(_MainTex,float4(float2(v.uv.x,v.uv.y),0,1));
+				v.vertex.y=col.r*0.5; 
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
 				return o;
@@ -52,7 +52,6 @@ Shader "Image/ImageMozaik"
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				_Repeat=40;
 				float4 col;
 				float2 uvIn=i.uv;
 				//_Position=float4(0.5,0.5,0.6,0);

@@ -37,6 +37,13 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 	FrameCounterHelper _captureFPS=new FrameCounterHelper();
 
 	Average3 _facePos = new Average3 (4);
+	bool _faceDetected=false;
+
+	public bool FaceDetected {
+		get {
+			return _faceDetected;
+		}
+	}
 
 	public Vector3 FacePos {
 		get{ return _facePos.Value; }
@@ -95,15 +102,20 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 
 					if (_face != null) {
 
-						int x=(int)(Mathf.Max(0, _face.x * 2-Margin));
-						int y=(int)(Mathf.Max(0, _face.y * 2-Margin));
-						int w = (int)(Mathf.Min(Width-x,_face.width * 2 + Margin * 2));
-						int h = (int)(Mathf.Min(Height-y,_face.height * 2 + Margin * 2));
+						int x = (int)(Mathf.Max (0, _face.x * 2 - Margin));
+						int y = (int)(Mathf.Max (0, _face.y * 2 - Margin));
+						int w = (int)(Mathf.Min (Width - x, _face.width * 2 + Margin * 2));
+						int h = (int)(Mathf.Min (Height - y, _face.height * 2 + Margin * 2));
 						FaceRect.Set (x, y, w, h);
 						_facePos.AddSample (new Vector3 (x, y, w));
-						_capDev.ToImage (_faceImage,x,y,w,h);
+						_capDev.ToImage (_faceImage, x, y, w, h);
 						_faceCaptured = true;
+						_faceDetected = true;
+					} else {
+						_faceDetected = false;
 					}
+				} else {
+					_faceDetected = false;
 				}
 			}
 		}

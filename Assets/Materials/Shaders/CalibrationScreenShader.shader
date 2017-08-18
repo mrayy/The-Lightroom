@@ -46,6 +46,7 @@ Shader "Hidden/CalibrationScreenShader"
 			uniform float4 _MainTex_TexelSize;
 			uniform sampler2D _MainTex;
 			uniform sampler2D _BGTex;
+			uniform sampler2D _Tex;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -69,8 +70,8 @@ Shader "Hidden/CalibrationScreenShader"
 				float cut=lerp(0.4,_Position.z,dist);
 
 				v=step(cut,v);
-				col=tex2D(_BGTex,uvIn);
-				col.a=v;
+				col=lerp(tex2D(_BGTex,uvIn),tex2D(_Tex,uvIn),1-v);
+				//col.a=v;
 				return col;
 			}
 			ENDCG

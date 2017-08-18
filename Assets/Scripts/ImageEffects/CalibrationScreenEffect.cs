@@ -19,6 +19,7 @@ public class CalibrationScreenEffect : MonoBehaviour {
 
 	public RawImage target;
 	public Texture BGTexture;
+	public VideoCapture Capture;
 
 	OffscreenProcessor _renderer;
 
@@ -96,6 +97,7 @@ public class CalibrationScreenEffect : MonoBehaviour {
 			_renderer.ProcessingMaterial.SetFloat ("_Repeat", Repeat);
 			_renderer.ProcessingMaterial.SetVector ("_Position", pos);
 			_renderer.ProcessingMaterial.SetTexture ("_BGTex", BGTexture);
+			_renderer.ProcessingMaterial.SetTexture ("_Tex", Capture.BlitImage);
 		}
 		target.texture= _renderer.ProcessTexture (new Vector2(Screen.width,Screen.height));
 
