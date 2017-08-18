@@ -50,7 +50,7 @@ namespace Flask
 		}
 		public float Step(float target)
 		{
-			this.target =target= target;
+			this.target =target;
 			var dt = Time.deltaTime;
 			var n1 = velocity - (position - target) * (omega * omega * dt);
 			var n2 = 1 + omega * dt;

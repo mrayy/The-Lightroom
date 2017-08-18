@@ -119,9 +119,16 @@ public class HandPosCalibrator : MonoBehaviour {
 
 		if (_CurrCalibPoint < CalibrationPoints.Length)
 			CalibPoint.SetPosition (CalibrationPoints [_CurrCalibPoint]);
+		else
+			OnDone ();
 
 
 		return true;
+	}
+
+	void OnDone()
+	{
+		CalibPoint.OnDone ();
 	}
 
 
@@ -130,9 +137,10 @@ public class HandPosCalibrator : MonoBehaviour {
 		Debug.Log ("Resetting");
 		_regData.Reset ();
 		_CurrCalibPoint = 0;
-		CalibPoint.SetCalibrated (false);
+		CalibPoint.Reset ();
 		CalibPoint.SetPosition (CalibrationPoints [_CurrCalibPoint]);
 		CalibPoint.Pinched ();
+
 		for (int i = 0; i < CalibrationPoints.Length; ++i) {
 			Poses [i]=Vector3.zero;
 		}

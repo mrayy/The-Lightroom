@@ -44,4 +44,15 @@ public class CalibrationPoint : MonoBehaviour {
 		Effect.SetTriggered ();
 	}
 
+	public void Reset()
+	{
+		Effect.Restart ();
+		SetCalibrated (false);
+	}
+
+	public void OnDone()
+	{
+		Effect.OnDone ();
+	}
+
 }

@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 
 public class CalibrationScreenEffect : MonoBehaviour {
-	private Material material;
-
 	Flask.DTween _flashTween=new Flask.DTween(0,10);
 	Flask.DTween _sizeTween=new Flask.DTween(0,5f);
 	Flask.DTweenVector2 _positionTween=new Flask.DTweenVector2(new Vector2(0,0),10);
+	Flask.DTween _fadeTween=new Flask.DTween(0,10f);
 
 	Vector2 _targetPosition;
 
+	public float TargetRepeat=10;
 	public float Repeat=10;
 	public float MaxGazeSize=0.2f;
 	public Vector4 pos;
@@ -21,6 +21,16 @@ public class CalibrationScreenEffect : MonoBehaviour {
 	public Texture BGTexture;
 
 	OffscreenProcessor _renderer;
+
+	enum EStatus
+	{
+		Idle,
+		FadeIn,
+		Calibrate,
+		FadeOut,
+	}
+
+	EStatus _status=EStatus.Idle;
 
 	float _beatingSpeed=1.5f;
 	Coroutine _hearBeatCor;
@@ -46,6 +56,8 @@ public class CalibrationScreenEffect : MonoBehaviour {
 		_flashTween.Step ();
 		_sizeTween.Step ();
 		_positionTween.Step ();
+		_fadeTween.Step ();
+		Repeat = TargetRepeat*_fadeTween.position;
 		RenderImage ();
 	}
 
@@ -78,11 +90,6 @@ public class CalibrationScreenEffect : MonoBehaviour {
 	// Postprocess the image
 	void RenderImage ()
 	{
-		if (material == null)
-		{
-			material = new Material(Shader.Find("Hidden/CalibrationScreenShader") );
-			material.hideFlags = HideFlags.DontSave;
-		}
 
 		pos = new Vector4 (_positionTween.position.x, _positionTween.position.y, _flashTween.position, _sizeTween.position*MaxGazeSize);
 		if (_renderer.ProcessingMaterial != null) {
@@ -94,5 +101,16 @@ public class CalibrationScreenEffect : MonoBehaviour {
 
 		//if (_flashTween.position == 0)
 		//	this.enabled = false;
+	}
+
+	public void Restart()
+	{
+		_fadeTween.position = 0;
+		_fadeTween.target = 1;
+	}
+	public void OnDone()
+	{
+		_fadeTween.position = 1;
+		_fadeTween.target = 2;
 	}
 }

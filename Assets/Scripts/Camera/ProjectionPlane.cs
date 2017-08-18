@@ -8,6 +8,7 @@ public class ProjectionPlane : MonoBehaviour {
 	public float OffsetX,OffsetY;
 	public float ScreenDistance;
 	public Transform head;
+	public float aspect;
 
 	// Use this for initialization
 	void Start () {
@@ -16,11 +17,11 @@ public class ProjectionPlane : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		float aspect = Screen.width/Screen.height;
+		aspect = (float)Screen.width/(float)Screen.height;
 
 
 
 		//this.transform.localPosition = new Vector3 (OffsetX, OffsetY, head.localPosition.z + ScreenDistance);
-		this.transform.localScale = new Vector3 (1.0f, (float)Screen.height/(float)Screen.width,1);
+		this.transform.localScale = new Vector3 (aspect, 1,1);
 	}
 }
