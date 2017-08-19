@@ -8,6 +8,7 @@ using System;
 public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 
 	public int index;
+	public int Width=640,Height=480;
 
 	[Serializable]
 	public class FaceDetectorParameters
@@ -37,7 +38,7 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 	FrameCounterHelper _captureFPS=new FrameCounterHelper();
 
 	Average3 _facePos = new Average3 (4);
-	bool _faceDetected=false;
+	public bool _faceDetected=false;
 
 	public bool FaceDetected {
 		get {
@@ -55,7 +56,6 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 	bool _faceCaptured=false;
 	public int Margin=50;
 
-	public int Width=640,Height=480;
 
 	// Use this for initialization
 	void Start () {
@@ -102,10 +102,10 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 
 					if (_face != null) {
 
-						int x = (int)(Mathf.Max (0, _face.x * 2 - Margin));
-						int y = (int)(Mathf.Max (0, _face.y * 2 - Margin));
-						int w = (int)(Mathf.Min (Width - x, _face.width * 2 + Margin * 2));
-						int h = (int)(Mathf.Min (Height - y, _face.height * 2 + Margin * 2));
+						int x = (int)(Mathf.Max (0, _face.x  - Margin));
+						int y = (int)(Mathf.Max (0, _face.y - Margin));
+						int w = (int)(Mathf.Min (Width - x, _face.width  + Margin * 2));
+						int h = (int)(Mathf.Min (Height - y, _face.height  + Margin * 2));
 						FaceRect.Set (x, y, w, h);
 						_facePos.AddSample (new Vector3 (x, y, w));
 						_capDev.ToImage (_faceImage, x, y, w, h);
