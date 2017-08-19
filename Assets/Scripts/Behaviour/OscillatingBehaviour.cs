@@ -2,31 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(ElementBehaviour))]
 public class OscillatingBehaviour : IBehaviour {
 
-	public float Speed = 1;
-	public float Offset=0;
-	public float Range=0;
 	public Vector3 InitialOffset;
+
+	Quaternion _axis=Quaternion.identity;
+	ElementBehaviour _baseBehaviour;
 
 	float _time=0;
 
 	// Use this for initialization
 	void Start () {
 
-		Offset = (float)Random.Range (-100, 100) / 200.0f;
-		Speed = (float)Random.Range (-100, 100) / 200.0f;
-		Range = (float)Random.Range (-100, 100) / 20.0f;
-
 		InitialOffset = transform.localPosition;
-		
+
+		_axis = Quaternion.Euler (Random.Range (0, 180), Random.Range (0, 180), 0);
+
+		_baseBehaviour = GetComponent<ElementBehaviour> ();
 	}
 	
 	// Update is called once per frame
 	protected override void UpdateBehaviour () {
 		base.UpdateBehaviour ();
 
-		this.transform.localPosition = new Vector3 (InitialOffset.x,InitialOffset.y,Mathf.Sin(_time*Speed+Offset)*Range+InitialOffset.z);
+		Vector3 pos=new Vector3(_baseBehaviour.Radius*Mathf.Cos(_baseBehaviour.Theta),0,_baseBehaviour.Radius*Mathf.Sin(_baseBehaviour.Theta));
+
+		this.transform.localPosition = InitialOffset+_axis*pos;
 
 		_time += Time.deltaTime;
 	}

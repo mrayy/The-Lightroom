@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(AudioSource))]
-public class AudioBehaviour : MonoBehaviour {
+[RequireComponent(typeof(AudioSource),typeof(ElementBehaviour))]
+public class AudioBehaviour : IBehaviour {
 
 	static float[][] _Scales = new float[][]
 	{
@@ -19,9 +19,9 @@ public class AudioBehaviour : MonoBehaviour {
 	public float Note;
 	float[] _samples;
 
-	public float radius=1.0f;
 	float _decay=1.0f;
-	float _theta=Mathf.PI;
+
+	ElementBehaviour _baseBehaviour;
 
 	AudioSource _source;
 
@@ -44,22 +44,29 @@ public class AudioBehaviour : MonoBehaviour {
 			_samples [i] = _generator.Sample ();
 
 		_source=GetComponent<AudioSource> ();
-
+		_source.loop = true;
 		_source.clip = AudioClip.Create ("", _samples .Length, 1, AudioSettings.outputSampleRate, false);
 		_source.clip.SetData (_samples, 0);
 		_source.Play ();
 
+		_baseBehaviour = GetComponent<ElementBehaviour> ();
+
+	}
+	protected override void StopBehaviour () {
+		base.StopBehaviour ();
+		_source.Stop ();
+	}
+	protected override void StartBehaviour () {
+		base.StartBehaviour ();
+		_source.Play ();
 	}
 
 	// Update is called once per frame
-	void Update () {
+	protected override void UpdateBehaviour () {
+		base.UpdateBehaviour ();
 
-
-		_generator.Sample ();
 
 		//update audio volume
-		float r = radius / (1.0f + Mathf.Cos (_theta)*0.5f);;
-		_source.volume = VolumeManager.Instance.Volume * 0.5f*_decay*(1.0f+Mathf.Cos(_theta));
-		_theta += Time.deltaTime*VolumeManager.Instance.AudioOmega/(r*r);
+		_source.volume = VolumeManager.Instance.Volume * 0.5f*_decay*(1.0f+Mathf.Cos(_baseBehaviour.Theta));
 	}
 }

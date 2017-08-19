@@ -8,6 +8,9 @@ public class CameraTracker : MonoBehaviour {
 	public Vector3 Initial;
 	public Vector3 Offset;
 
+	public Vector3 MinLimits = new Vector3 (-1, -1, -1);
+	public Vector3 MaxLimits = new Vector3 (1, 1, 1);
+
 	public bool UseMouse=false;
 	public VideoCapture CaptureCam;
 
@@ -23,7 +26,11 @@ public class CameraTracker : MonoBehaviour {
 			Initial = GetEyePos ();
 		}
 		Vector3 pos = GetEyePos () - Initial;
-		transform.position = new Vector3(pos.x*Gain.x,pos.y*Gain.y,pos.z*Gain.z)+Offset;
+		pos = Vector3.Scale (pos, Gain);
+		pos.x = Mathf.Clamp (pos.x, MinLimits.x, MaxLimits.x);
+		pos.y = Mathf.Clamp (pos.y, MinLimits.y, MaxLimits.y);
+		pos.z = Mathf.Clamp (pos.z, MinLimits.z, MaxLimits.z);
+		transform.position = pos+Offset;
 	}
 
 	Vector3 GetEyePos()
@@ -38,5 +45,10 @@ public class CameraTracker : MonoBehaviour {
 			return ret;
 				
 		}
+	}
+
+	void OnDrawGizmos()
+	{
+		Gizmos.DrawWireCube (Offset+(MinLimits + MaxLimits) / 2, (MaxLimits - MinLimits));
 	}
 }

@@ -22,6 +22,6 @@ public class ProjectionPlane : MonoBehaviour {
 
 
 		//this.transform.localPosition = new Vector3 (OffsetX, OffsetY, head.localPosition.z + ScreenDistance);
-		this.transform.localScale = new Vector3 (aspect, 1,1);
+		this.transform.localScale = new Vector3 (ScreenWidth, ScreenWidth/aspect,1);
 	}
 }

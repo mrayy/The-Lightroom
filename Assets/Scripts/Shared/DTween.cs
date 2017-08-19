@@ -33,6 +33,50 @@ namespace Flask
 	// tweening with the critically damped sprint model
 	class DTween
 	{
+		#region Static Functions
+
+		public static float Step(
+			float current, float target, ref float velocity, float omega)
+		{
+			var dt = Time.deltaTime;
+			var n1 = velocity - (current - target) * (omega * omega * dt);
+			var n2 = 1 + omega * dt;
+			velocity = n1 / (n2 * n2);
+			return current + velocity * dt;
+		}
+
+		public static Vector2 Step(
+			Vector2 current, Vector2 target, ref Vector2 velocity, float omega)
+		{
+			var dt = Time.deltaTime;
+			var n1 = velocity - (current - target) * (omega * omega * dt);
+			var n2 = 1 + omega * dt;
+			velocity = n1 / (n2 * n2);
+			return current + velocity * dt;
+		}
+
+		public static Vector3 Step(
+			Vector3 current, Vector3 target, ref Vector3 velocity, float omega)
+		{
+			var dt = Time.deltaTime;
+			var n1 = velocity - (current - target) * (omega * omega * dt);
+			var n2 = 1 + omega * dt;
+			velocity = n1 / (n2 * n2);
+			return current + velocity * dt;
+		}
+
+		public static Vector4 Step(
+			Vector4 current, Vector4 target, ref Vector4 velocity, float omega)
+		{
+			var dt = Time.deltaTime;
+			var n1 = velocity - (current - target) * (omega * omega * dt);
+			var n2 = 1 + omega * dt;
+			velocity = n1 / (n2 * n2);
+			return current + velocity * dt;
+		}
+
+
+		#endregion
 		public float position;
 		public float velocity;
 		public float omega;
