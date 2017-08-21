@@ -5,8 +5,7 @@ using System;
 using Flask;
 
 
-[RequireComponent(typeof(Renderer))]
-public class WallCubeBehaviour :IBehaviour {
+public class WallCubeBehaviour {
 
 
 	[Serializable]
@@ -29,15 +28,20 @@ public class WallCubeBehaviour :IBehaviour {
 	}
 
 
+
 	public float Saturation=1.0f;
-	float Lighting=0.0f;
+	public float Lighting=0.0f;
 
 	float _spawnTime=0;
 
 	public float Attraction;
 	DTween _spring=new DTween(0,15f);
 
-	Vector3 _originalScale;
+
+	public int Index=0;
+	public Vector3 Position;
+	public Vector3 BasePosition;
+	public float Scale=0;
 
 	enum EState
 	{
@@ -47,16 +51,8 @@ public class WallCubeBehaviour :IBehaviour {
 	}
 	EState _state=EState.Idle;
 
-	Renderer _renderer;
-	// Use this for initialization
-	void Start () {
-
-		_originalScale = transform.localScale;
-
-		_renderer = GetComponent<Renderer> ();
-
+	public WallCubeBehaviour () {
 		_spring.omega = 2f + 20*Saturation;
-
 	}
 
 
@@ -75,7 +71,7 @@ public class WallCubeBehaviour :IBehaviour {
 			{
 				if (_spawnTime >= 0) {
 					float spawn = Config.SpawnAnimation.Evaluate (_spawnTime);
-					transform.localScale = Vector3.Scale (_originalScale, new Vector3 (1, 1, spawn));
+					Scale=spawn;
 					Lighting = spawn;
 				}
 				_spawnTime += Time.deltaTime*Config.spawnSpeed;
@@ -86,24 +82,22 @@ public class WallCubeBehaviour :IBehaviour {
 			break;
 		case EState.Active:
 			{
-				float a=AttractorManager.Instance.CalculateAttraction (transform.position);
+				float a=AttractorManager.Instance.CalculateAttraction (Position);
 				Attraction=_spring.Step (a);
 
 
 				float strength = Config.ClickAnimation.Evaluate (Attraction);
-				transform.localScale = Vector3.Scale (_originalScale, new Vector3 (1, 1, strength));
+				Scale = strength;
 				Lighting = strength;
 
 			}
 			break;
 		}
-		_renderer.material.color = Color.HSVToRGB (Config.H, Saturation, Lighting);
+		//_renderer.material.color = Color.HSVToRGB (Config.H, Saturation, Lighting);
 	}
 
 	// Update is called once per frame
-	protected override void UpdateBehaviour () {
-		base.UpdateBehaviour ();
-
+	public void Update () {
 		_process ();
 	}
 }
