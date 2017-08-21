@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: c73b27ff58fc947709ba06d6c2cdf7e6
+timeCreated: 1503313643
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Pixel ModeX
+  fontNames:
+  - Pixel ModeX
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

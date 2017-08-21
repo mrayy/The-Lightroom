@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Flask;
 
-public class CameraTracker : MonoBehaviour {
+public class CameraTrackerBehaviour : IBehaviour {
 
 	public Vector3 Gain=new Vector3(1,1,1);
 	public Vector3 Initial;
@@ -14,17 +15,56 @@ public class CameraTracker : MonoBehaviour {
 	public bool UseMouse=false;
 	public VideoCapture CaptureCam;
 
+
+	//for initial animation purpose
+	public float MinZ;
+	public float MaxZ;
+	public float AnimSpeed=1;
+	bool _animationDone=false;
+
+	DTween _animTween = new DTween (0, 2);
+
+
 	// Use this for initialization
 	void Start () {
-		Offset = transform.position;
+		Offset = transform.localPosition;
+		Offset.z = MinZ;
 	}
-	
-	// Update is called once per frame
-	void Update () {
 
-		if (Input.GetKeyDown (KeyCode.Space)) {
+	bool _updateAnimation()
+	{
+		if (_animationDone == true)
+			return false;
+
+		_animTween.Step (MaxZ);
+		Offset.z = _animTween.position;
+		transform.localPosition = Offset;
+		if (Mathf.Abs (Offset.z - MaxZ) < 0.01f) {
 			Initial = GetEyePos ();
+			_animationDone = true;
 		}
+		return true;
+	}
+
+	public void Reset()
+	{
+		_animationDone = false;
+		Offset.z = MinZ;
+		_animTween.position = MinZ;
+		transform.localPosition = Offset;
+	}
+	public override void StartBehaviour(){
+		Reset ();
+		base.StartBehaviour ();
+	}
+
+	// Update is called once per frame
+	protected override void UpdateBehaviour()
+	{
+		base.UpdateBehaviour ();
+
+		if (_updateAnimation ())
+			return;
 		Vector3 pos = GetEyePos () - Initial;
 		pos = Vector3.Scale (pos, Gain);
 		pos.x = Mathf.Clamp (pos.x, MinLimits.x, MaxLimits.x);

@@ -7,10 +7,10 @@ public class IBehaviour : MonoBehaviour {
 
 	public bool _behaviourPaused=false;
 
-	protected virtual void StopBehaviour(){
+	public virtual void StopBehaviour(){
 		_behaviourPaused = true;
 	}
-	protected virtual void StartBehaviour(){
+	public virtual void StartBehaviour(){
 		_behaviourPaused = false;
 	}
 	protected virtual void UpdateBehaviour()

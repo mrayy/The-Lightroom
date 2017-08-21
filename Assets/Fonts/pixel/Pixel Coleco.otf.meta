@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: ca7555aad00d5444db89f6f955f64f64
+timeCreated: 1503313643
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Pixel Coleco
+  fontNames:
+  - Pixel Coleco
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -52,11 +52,11 @@ public class AudioBehaviour : IBehaviour {
 		_baseBehaviour = GetComponent<ElementBehaviour> ();
 
 	}
-	protected override void StopBehaviour () {
+	public override void StopBehaviour () {
 		base.StopBehaviour ();
 		_source.Stop ();
 	}
-	protected override void StartBehaviour () {
+	public override void StartBehaviour () {
 		base.StartBehaviour ();
 		_source.Play ();
 	}
@@ -64,7 +64,6 @@ public class AudioBehaviour : IBehaviour {
 	// Update is called once per frame
 	protected override void UpdateBehaviour () {
 		base.UpdateBehaviour ();
-
 
 		//update audio volume
 		_source.volume = VolumeManager.Instance.Volume * 0.5f*_decay*(1.0f+Mathf.Cos(_baseBehaviour.Theta));

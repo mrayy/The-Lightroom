@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: bcde831b889254774993916c6b3e443a
+timeCreated: 1503313643
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Pixel Tandy
+  fontNames:
+  - Pixel Tandy
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

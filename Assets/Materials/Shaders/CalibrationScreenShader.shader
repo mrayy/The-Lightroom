@@ -71,7 +71,7 @@ Shader "Hidden/CalibrationScreenShader"
 
 				v=step(cut,v);
 				col=lerp(tex2D(_BGTex,uvIn),tex2D(_Tex,uvIn),1-v);
-				//col.a=v;
+				col.a=1-col.a;
 				return col;
 			}
 			ENDCG

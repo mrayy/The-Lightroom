@@ -10,11 +10,18 @@ public class HandPosCalibrator : MonoBehaviour {
 	public Vector2[] CalibrationPoints;
 	public Vector3[] Poses;
 
-	int _CurrCalibPoint=0;
+	int _CurrCalibPoint=-1;
 	bool _isPinched=false;
 
 	CalibrationPlane _calibPlane = new CalibrationPlane ();
 	Regression2D _regData=new Regression2D();
+
+	public delegate void OnCalibrationDone_Deleg();
+	public delegate void OnCalibrationReset_Deleg(bool failure);
+	public delegate void OnCalibrationPoint_Deleg(Vector3 pos);
+	public OnCalibrationDone_Deleg OnCalibrationDone;
+	public OnCalibrationPoint_Deleg OnCalibrationPoint;
+	public OnCalibrationReset_Deleg OnCalibrationReset;
 
 	public CalibrationPoint CalibPoint;
 
@@ -27,7 +34,7 @@ public class HandPosCalibrator : MonoBehaviour {
 
 	public bool IsPinched {
 		get {
-			if (UseMouse) {
+			if (UseMouse || Hand==null) {
 				return Input.GetMouseButtonDown (0);
 			} else
 				return Hand.IsHolding;
@@ -35,7 +42,7 @@ public class HandPosCalibrator : MonoBehaviour {
 	}
 	public Vector3 Position {
 		get {
-			if (UseMouse) {
+			if (UseMouse || Hand==null) {
 				return new Vector3 (Input.mousePosition.x / (float)Screen.width, Input.mousePosition.y / (float)Screen.height, 0);
 			} else
 				return Hand.Position;
@@ -48,6 +55,20 @@ public class HandPosCalibrator : MonoBehaviour {
 		get {
 			return _regData.IsCalibrated;
 		}
+	}
+
+	public bool IsCalibrating {
+		get {
+			return _CurrCalibPoint>=0 && _CurrCalibPoint < CalibrationPoints.Length;
+		}
+	}
+
+	public float PinchTime {
+		get{ return Time.time - _lastTime; }
+	}
+
+	public int CalibrationPointNumber {
+		get{ return _CurrCalibPoint; }
 	}
 
 	// Use this for initialization
@@ -68,23 +89,24 @@ public class HandPosCalibrator : MonoBehaviour {
 				if (_CurrCalibPoint == CalibrationPoints.Length) {
 					if (!Calibrate ()) {
 						Debug.Log ("Failed to calibrate, restarting");
-						Reset ();
+						Reset (true);
 					} else {
 						CalibPoint.SetCalibrated (true);
 					}
 				}
 				_lastTime = Time.time;
 				_isPinched = true;
-			} else if (Time.time - _lastTime > 3 && _CurrCalibPoint!=0) {
-				Reset ();
 			}
+			/*else if (Time.time - _lastTime > 3 && _CurrCalibPoint!=0) {
+				Reset ();
+			}*/
 		} else {
 			_isPinched = false;
 		}
 
-		if (Input.GetKeyDown (KeyCode.R)) {
-			Reset ();
-		}
+		//if (Input.GetKeyDown (KeyCode.R)) {
+		//	Reset ();
+		//}
 
 		if (IsCalibrated) {
 			point = _regData.GetPoint (_calibPlane.ProjectPoint2D (Position));
@@ -117,6 +139,9 @@ public class HandPosCalibrator : MonoBehaviour {
 		Poses [_CurrCalibPoint] = pos;
 		_CurrCalibPoint++;
 
+		if (OnCalibrationPoint != null)
+			OnCalibrationPoint (pos);
+
 		if (_CurrCalibPoint < CalibrationPoints.Length)
 			CalibPoint.SetPosition (CalibrationPoints [_CurrCalibPoint]);
 		else
@@ -129,17 +154,22 @@ public class HandPosCalibrator : MonoBehaviour {
 	void OnDone()
 	{
 		CalibPoint.OnDone ();
+		if (OnCalibrationDone!=null)
+			OnCalibrationDone ();
 	}
 
 
-	public void Reset()
+	public void Reset(bool fromFailure=false)
 	{
-		Debug.Log ("Resetting");
+		//Debug.Log ("Resetting");
 		_regData.Reset ();
 		_CurrCalibPoint = 0;
 		CalibPoint.Reset ();
 		CalibPoint.SetPosition (CalibrationPoints [_CurrCalibPoint]);
 		CalibPoint.Pinched ();
+
+		if (OnCalibrationReset!=null)
+			OnCalibrationReset (fromFailure);
 
 		for (int i = 0; i < CalibrationPoints.Length; ++i) {
 			Poses [i]=Vector3.zero;

@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 1b7cecd56597c493c9ed5637e9648b9c
+timeCreated: 1503313643
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Pixel Gosub
+  fontNames:
+  - Pixel Gosub
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

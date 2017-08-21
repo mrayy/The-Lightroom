@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 460c0a864c9a6400281c81891e2b833d
+timeCreated: 1503312392
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Wild River
+  fontNames:
+  - Wild River
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -76,6 +76,20 @@ public class ParticleEffector : MonoBehaviour {
 
 	Particle[] _particles;
 
+	[SerializeField]bool _paused=true;
+	public bool Paused
+	{
+		set{
+			_paused = value;
+
+			_onPaused (value);
+		}
+
+		get{
+			return _paused;
+		}
+	}
+
 	// Use this for initialization
 	void Start () {
 		
@@ -204,11 +218,22 @@ public class ParticleEffector : MonoBehaviour {
 		_renderMaterial.SetFloat ("_Hue", h);
 		_renderMaterial.SetFloat ("_Saturation", s);
 	}
+
+
+	void _onPaused(bool paused)
+	{
+		if (!paused) {
+			foreach (var p in _particles)
+				_setupParticle (p);
+		} 
+	}
 	// Update is called once per frame
 	void Update () {
 		if (_dirty)
 			_InitMesh ();
-		
+
+		if (Paused)
+			return;
 		_updateParticles ();
 		_updateDataMatrix ();
 

@@ -46,6 +46,20 @@ public class WallGenerator : MonoBehaviour {
 	Mesh _mesh;
 	bool _dirty=true;
 
+	[SerializeField]bool _paused=true;
+	public bool Paused
+	{
+		set{
+			_paused = value;
+
+			if (_paused)
+				_onPaused ();
+		}
+
+		get{
+			return _paused;
+		}
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -53,7 +67,7 @@ public class WallGenerator : MonoBehaviour {
 		_noiseSpeed= UnityEngine.Random.value*0.1f+0.05f;
 	}
 
-	void SpawnCubes()
+	public void SpawnCubes()
 	{
 		float maxDistance = TilesCount*TileSize / 2.0f;
 		foreach (var c in _cubes) {
@@ -162,11 +176,26 @@ public class WallGenerator : MonoBehaviour {
 		_dataBuffer1.SetPixels(_dataMatrix1);
 		_dataBuffer1.Apply ();
 	}
+
+	void _onPaused()
+	{
+		foreach (var c in _cubes) {
+			_dataMatrix1 [c.Index].r=0;
+			_dataMatrix1 [c.Index].g=0;
+			_dataMatrix1 [c.Index].b=0;
+			_dataMatrix1 [c.Index].a=0;
+		}
+		_dataBuffer1.SetPixels(_dataMatrix1);
+		_dataBuffer1.Apply ();
+	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (_dirty)
 			_InitMesh ();
+
+		if (Paused)
+			return;
 
 		//Color.RGBToHSV (BaseColor, out Config.H, out Config.S,out  Config.V);
 		Config.H=Reaktion.Perlin.Noise(_noise);
@@ -177,7 +206,6 @@ public class WallGenerator : MonoBehaviour {
 
 		_updateDataMatrix ();
 
-		if (Input.GetKey (KeyCode.Space))
-			SpawnCubes ();
+
 	}
 }
