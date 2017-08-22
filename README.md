@@ -7,3 +7,15 @@ The concept of this room is the psudeo-immersion of visuals, sensory and interac
 - Particles: emitted from the walls represented the effect of attraction towards the affectors.
 
 The perspective of the rooms is changed based on user's head position, which is tracked using a webcamera. The rendering is done using off-axis projection, simulating looking-through a window. 
+
+
+Plugins Used:
+--------
+- UnityOpenCV: https://github.com/mrayy/UnityOpencv
+- Leapmotion SDK
+
+
+Credits:
+--------
+- Keijiro Takahashi's handful math utilities: https://github.com/keijiro  (DTween, Perlin)
+
