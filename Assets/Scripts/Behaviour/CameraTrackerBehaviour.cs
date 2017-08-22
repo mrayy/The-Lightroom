@@ -16,6 +16,8 @@ public class CameraTrackerBehaviour : IBehaviour {
 	public VideoCapture CaptureCam;
 
 
+	DTweenVector3 _motionTween = new DTweenVector3 (Vector3.zero, 20);
+
 	//for initial animation purpose
 	public float MinZ;
 	public float MaxZ;
@@ -41,6 +43,7 @@ public class CameraTrackerBehaviour : IBehaviour {
 		transform.localPosition = Offset;
 		if (Mathf.Abs (Offset.z - MaxZ) < 0.01f) {
 			Initial = GetEyePos ();
+			_motionTween.position =_motionTween.target= Offset;
 			_animationDone = true;
 		}
 		return true;
@@ -70,7 +73,9 @@ public class CameraTrackerBehaviour : IBehaviour {
 		pos.x = Mathf.Clamp (pos.x, MinLimits.x, MaxLimits.x);
 		pos.y = Mathf.Clamp (pos.y, MinLimits.y, MaxLimits.y);
 		pos.z = Mathf.Clamp (pos.z, MinLimits.z, MaxLimits.z);
-		transform.position = pos+Offset;
+		_motionTween.target = pos + Offset;
+		_motionTween.Step ();
+		transform.position = _motionTween.position;
 	}
 
 	Vector3 GetEyePos()

@@ -140,7 +140,7 @@ public class CalibrationPlane
 }
 
 
-//Linear Regression
+//Linear Regression, used for hand position calibration
 //http://machinelearningmastery.com/simple-linear-regression-tutorial-for-machine-learning/
 class Regression2D
 {

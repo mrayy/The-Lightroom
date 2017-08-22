@@ -222,6 +222,8 @@ public class ParticleEffector : MonoBehaviour {
 
 	void _onPaused(bool paused)
 	{
+		if (_dirty)
+			_InitMesh ();
 		if (!paused) {
 			foreach (var p in _particles)
 				_setupParticle (p);

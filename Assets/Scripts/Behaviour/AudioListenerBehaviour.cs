@@ -22,6 +22,6 @@ public class AudioListenerBehaviour :IBehaviour {
 		base.UpdateBehaviour ();
 
 
-		this.transform.localScale = _baseScale+ new Vector3 (_audioSpec.MeanLevels[BaseBand+0],_audioSpec.MeanLevels[BaseBand+1],_audioSpec.MeanLevels[BaseBand+2]);
+		this.transform.localScale = _baseScale+ new Vector3 (_audioSpec.MeanLevels[BaseBand],_audioSpec.MeanLevels[BaseBand],_audioSpec.MeanLevels[BaseBand]);
 	}
 }

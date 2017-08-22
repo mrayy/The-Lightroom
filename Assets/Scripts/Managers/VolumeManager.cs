@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Flask;
 
 public class VolumeManager: MonoBehaviour {
 
@@ -24,6 +25,8 @@ public class VolumeManager: MonoBehaviour {
 	public float Speed=4.0f;
 	public float Weight=5.0f;
 
+	DTween _volTween=new DTween(0,3);
+
 	float amplifier=1.0f;
 
 	// Use this for initialization
@@ -35,6 +38,6 @@ public class VolumeManager: MonoBehaviour {
 		float target = Mathf.Clamp01 (Weight / (3 + Weight));
 		amplifier = Mathf.Exp (-Speed * Time.deltaTime) * (amplifier - target) + target;
 
-		Volume = TargetVolume * amplifier;
+		Volume = _volTween.Step(TargetVolume) * amplifier;
 	}
 }

@@ -30,7 +30,8 @@ public class AudioBehaviour : IBehaviour {
 
 		var gen = new Oscillator ();
 
-		float[] intervals = _Scales [ScaleIndex];
+		float[] intervals = _Scales [ScaleIndex%_Scales.Length];
+		Index = Random.Range (0, intervals.Length);
 		float interval = intervals [Index % intervals.Length];
 		float octave = (float)Index / (float)intervals.Length;
 		Note=BaseNote+octave*12+interval;
@@ -45,6 +46,7 @@ public class AudioBehaviour : IBehaviour {
 
 		_source=GetComponent<AudioSource> ();
 		_source.loop = true;
+		_source.spatialBlend= 1;
 		_source.clip = AudioClip.Create ("", _samples .Length, 1, AudioSettings.outputSampleRate, false);
 		_source.clip.SetData (_samples, 0);
 		_source.Play ();

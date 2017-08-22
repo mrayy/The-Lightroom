@@ -179,6 +179,8 @@ public class WallGenerator : MonoBehaviour {
 
 	void _onPaused()
 	{
+		if (_dirty)
+			_InitMesh ();
 		foreach (var c in _cubes) {
 			_dataMatrix1 [c.Index].r=0;
 			_dataMatrix1 [c.Index].g=0;

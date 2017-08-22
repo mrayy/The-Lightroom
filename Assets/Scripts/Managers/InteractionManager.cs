@@ -12,6 +12,8 @@ public class InteractionManager : MonoBehaviour {
 
 	public CameraTrackerBehaviour targetCamera;
 
+	public GameObject envRoot;
+
 	public Text InstructionText;
 	public Text DetailsText;
 
@@ -21,8 +23,9 @@ public class InteractionManager : MonoBehaviour {
 	public float _currAlpha;
 
 	DTween _colorTween=new DTween(0,1);
-	public float _lastTween=1;
 
+	public AudioSource BGM;
+	DTween _bgmVolume = new DTween (0, 2);
 
 	Coroutine _currentTextCor;
 
@@ -43,11 +46,12 @@ public class InteractionManager : MonoBehaviour {
 		HandCalibrator.OnCalibrationPoint += OnCalibrationPoint;
 
 		if (HandCalibrator.IsCalibrating) {
-			OnCalibrationReset(false);
+			Reset ();
 		}
 
-		_lastTween = _colorTween.target=1;
 
+		PlayDetails (new string[]{ "", "Don't get distracted by mee","", "The LightRoom by MHD Yamen Saraiji ","","Made for TeamLab career application, Interaction Design","","August 2017" },
+			new float[]{ 2,4,2, 4,0.5f,5,0.5f,5 });
 	}
 
 	float PlayText(string[] text,float[] timeout,float speed=1,bool isCentered=false)
@@ -83,6 +87,7 @@ public class InteractionManager : MonoBehaviour {
 			_currAlpha = 0;
 			InstructionText.text = text [i];
 			if (text [i] != "") {
+				_bgmVolume.target = 0.1f;
 				do {
 					_currAlpha = Mathf.Clamp01(_currAlpha+Time.deltaTime*speed);
 					yield return new WaitForEndOfFrame ();
@@ -91,6 +96,7 @@ public class InteractionManager : MonoBehaviour {
 			_currAlpha = 1;
 			yield return new WaitForSeconds (timeout [i]);
 			if (text [i] != "") {
+				_bgmVolume.target = 0.3f;
 				do{
 					_currAlpha = Mathf.Clamp01(_currAlpha-Time.deltaTime*speed);
 					yield return new WaitForEndOfFrame ();
@@ -104,40 +110,23 @@ public class InteractionManager : MonoBehaviour {
 	{
 		if(_currentTextCor!=null)
 			StopCoroutine (_currentTextCor);
-		_currentTextCor=StartCoroutine (PlayDetailsCor (text,timeout));
+		StartCoroutine (PlayDetailsCor (text,timeout));
 	}
 
 	IEnumerator PlayDetailsCor(string[] text,float[] timeout)
 	{
-		float time = 0;
-		Color clr = DetailsText.color;
 		for (int i = 0; i < text.Length; ++i) {
-
-			if (Random.value > 0.5f) {
-				DetailsText.rectTransform.localPosition = new Vector3 (-450,0, 0);
-			} else {
-				DetailsText.rectTransform.localPosition = new Vector3 (450, 190, 0);
+			
+			DetailsText.text = "";
+			foreach(var c in text[i]){
+				DetailsText.text += c;
+			//	DetailsText.lineSpacing=Mathf.Lerp(4,1,clr.a);
+				yield return new WaitForSeconds(0.05f+Random.value*0.2f);
 			}
-			time = 0;
-			clr.a = 0;
-			DetailsText.text = text [i];
-			if (text [i] != "") {
-				do {
-					clr.a = Mathf.Clamp01(_currAlpha+Time.deltaTime);
-					DetailsText.color=clr;
-					DetailsText.lineSpacing=Mathf.Lerp(4,1,clr.a);
-					yield return new WaitForEndOfFrame ();
-				} while (clr.a < 1);
-			}
-			clr.a = 1;
-			yield return new WaitForSeconds (timeout [i]);
-			if (text [i] != "") {
-				do{
-					clr.a = Mathf.Clamp01(_currAlpha-Time.deltaTime);
-					DetailsText.color=clr;
-					DetailsText.lineSpacing=Mathf.Lerp(4,1,clr.a);
-					yield return new WaitForEndOfFrame ();
-				} while (clr.a > 0);
+			yield return new WaitForSeconds(timeout[i]);
+			while (DetailsText.text.Length > 0) {
+				DetailsText.text=DetailsText.text.Remove (DetailsText.text.Length - 1);
+				yield return new WaitForSeconds(0.02f);
 			}
 
 		}
@@ -171,7 +160,6 @@ public class InteractionManager : MonoBehaviour {
 
 		cooldownCoroutine=StartCoroutine(StartSceneCooldown(t));
 	}
-
 	void OnCalibrationReset(bool failure)
 	{
 		if (!_firstCalibration) {
@@ -188,6 +176,18 @@ public class InteractionManager : MonoBehaviour {
 			PlayText (text, timeout);
 		} else
 			OnStartCalibration ();
+
+		Volume.TargetVolume = 0.1f;
+		targetCamera.Reset ();
+		targetCamera.StopBehaviour ();
+		Environment.Reset ();
+		_currentState = State.Calibration;
+		envRoot.SetActive (false);
+		if (cooldownCoroutine != null) {
+			StopCoroutine (cooldownCoroutine);
+			cooldownCoroutine = null;
+		}
+
 	}
 
 	void OnCalibrationPoint(Vector3 p)
@@ -200,25 +200,19 @@ public class InteractionManager : MonoBehaviour {
 	void Reset()
 	{
 		HandCalibrator.Reset ();
-		targetCamera.Reset ();
-		targetCamera.StopBehaviour ();
-		Environment.Reset ();
-		_currentState = State.Calibration;
-		if (cooldownCoroutine != null) {
-			StopCoroutine (cooldownCoroutine);
-			cooldownCoroutine = null;
-		}
 	}
 
 	void StartScene()
 	{
+		envRoot.SetActive (true);
 		targetCamera.StartBehaviour ();
 		Environment.StartEnvironment ();
 		_currentState = State.Idle;
 
+		Volume.TargetVolume = 0.8f;
 
 		string[] text = new string[]{ 
-			"","This is LightRoom (not Adobe)",
+			"","This is The LightRoom (not Adobe's one)",
 			"", "Your face is tracked using WebCam for OffAxis rendering",
 			"","You can add attractors by pinching",
 			"","You can reset any time using R button",
@@ -263,14 +257,14 @@ public class InteractionManager : MonoBehaviour {
 
 		_colorTween.Step ();
 		if (Mathf.Abs (_colorTween.position - _colorTween.target) < 0.05f) {
-		//	if (_lastTween == _colorTween.target) {
-				_colorTween.position=_colorTween.target;
-				_colorTween.target = 1 - _colorTween.target;
-				_lastTween = _colorTween.target;
-		//	}
+			_colorTween.position=_colorTween.target;
+			_colorTween.target = 1 - _colorTween.target;
 		}
 
 		Color1.a = Color2.a=_currAlpha;
 		InstructionText.color = Color.Lerp (Color1, Color2, _colorTween.position);
+
+		_bgmVolume.Step ();
+		BGM.volume = _bgmVolume.position;
 	}
 }

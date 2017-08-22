@@ -140,9 +140,21 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 		}
 		if (_captured) {
 			_image.BlitToTexture (BlitImage);
-			target.texture = BlitImage;
+			if(target!=null)
+				target.texture = BlitImage;
 			_captured = false;
 		}
+
+	}
+	void OnGUI()
+	{
+		if (Event.current.type.Equals (EventType.Repaint)) {
+			if (SettingsHolder.Instance.Debug) {
+				Graphics.DrawTexture (new Rect (0, 0, 128, 128), BlitImage);
+				Graphics.DrawTexture (new Rect (128, 0, 128, 128), FaceImage);
+			}
+		}
+
 	}
 	public string GetDebugString()
 	{

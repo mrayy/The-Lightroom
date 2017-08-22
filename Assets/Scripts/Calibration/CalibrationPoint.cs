@@ -28,7 +28,7 @@ public class CalibrationPoint : MonoBehaviour {
 	public void SetCalibrated(bool calibrated)
 	{
 		_calibrated = calibrated;
-		Effect.MaxGazeSize = _calibrated ? 0.1f : 0.2f;
+		Effect.MaxGazeSize = _calibrated ? 0.05f : 0.09f;
 	}
 
 	public void SetPosition(Vector2 pos)

@@ -14,7 +14,7 @@ public class CalibrationScreenEffect : MonoBehaviour {
 
 	public float TargetRepeat=10;
 	public float Repeat=10;
-	public float MaxGazeSize=0.2f;
+	public float MaxGazeSize=0.1f;
 	public Vector4 pos;
 
 	public RawImage target;
