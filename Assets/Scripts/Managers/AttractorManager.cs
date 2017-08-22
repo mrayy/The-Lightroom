@@ -61,7 +61,7 @@ public class AttractorManager : MonoBehaviour {
 			float dist = (pos - a.transform.position).magnitude;
 			res = res + a.BaseColor/ dist;
 		}
-		return res;
+		return res/(float)_attractors.Count;
 	}
 	// Update is called once per frame
 	void Update () {

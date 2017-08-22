@@ -31,6 +31,9 @@ public class ParticleEffector : MonoBehaviour {
 	public float MinLifespan;
 	public float MaxLifespan;
 
+	public float MinSize;
+	public float MaxSize;
+
 	public Vector3 acceleration;
 
 	public Vector3 MinVolume;
@@ -162,7 +165,7 @@ public class ParticleEffector : MonoBehaviour {
 		p.rot = Random.rotation;
 		p.randRot = Quaternion.AngleAxis(Random.value*10,Random.onUnitSphere);
 
-		p.scale = Random.value*0.5f+0.5f;
+		p.scale = Random.value*(MaxSize-MinSize)+MinSize;
 
 		p.pos = transform.localToWorldMatrix.MultiplyPoint (p.pos);
 	}

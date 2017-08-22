@@ -69,7 +69,7 @@
 	        rot.xyz=r.xyz;
 	        rot.w=sqrt(1.0-dot(rot.xyz,rot.xyz));
 
-	        o.pos=UnityObjectToClipPos(float4( rotateVec(v.pos.xyz,rot)*2*r.w+p.xyz,1));
+	        o.pos=UnityObjectToClipPos(float4( rotateVec(v.pos.xyz,rot)*p.w+p.xyz,1));
 	        //v.normal.xyz=rotateVec(v.normal.xyz,rot);
 
 	        o.color.rgb = hsv2rgb(float3(_Hue,_Saturation,r.w*0.5+0.5));//_Color * _Options.y;

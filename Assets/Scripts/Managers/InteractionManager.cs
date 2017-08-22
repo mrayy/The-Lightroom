@@ -22,12 +22,13 @@ public class InteractionManager : MonoBehaviour {
 
 	public float _currAlpha;
 
-	DTween _colorTween=new DTween(0,1);
+	DTween _colorTween=new DTween(0,2);
 
 	public AudioSource BGM;
 	DTween _bgmVolume = new DTween (0, 2);
 
 	Coroutine _currentTextCor;
+	Coroutine _detailsTextCor;
 
 	enum State
 	{
@@ -63,7 +64,7 @@ public class InteractionManager : MonoBehaviour {
 		for(int i=0;i<text.Length;++i)
 		{
 			time+=timeout[i];
-			if (text [i] == "")
+			if (text [i] != "")
 				time += 2.0f / speed;
 		}
 		_currentTextCor=StartCoroutine (PlayTextCor (text,timeout,speed,isCentered));
@@ -81,7 +82,7 @@ public class InteractionManager : MonoBehaviour {
 			InstructionText.fontSize = 42;
 		} else {
 			InstructionText.rectTransform.localPosition = Vector3.zero;
-			InstructionText.fontSize = 80;
+			InstructionText.fontSize = 140;
 		}
 		for (int i = 0; i < text.Length; ++i) {
 			_currAlpha = 0;
@@ -93,7 +94,6 @@ public class InteractionManager : MonoBehaviour {
 					yield return new WaitForEndOfFrame ();
 				} while (_currAlpha < 1);
 			}
-			_currAlpha = 1;
 			yield return new WaitForSeconds (timeout [i]);
 			if (text [i] != "") {
 				_bgmVolume.target = 0.3f;
@@ -108,9 +108,9 @@ public class InteractionManager : MonoBehaviour {
 
 	void PlayDetails(string[] text,float[] timeout)
 	{
-		if(_currentTextCor!=null)
-			StopCoroutine (_currentTextCor);
-		StartCoroutine (PlayDetailsCor (text,timeout));
+		if(_detailsTextCor!=null)
+			StopCoroutine (_detailsTextCor);
+		_detailsTextCor=StartCoroutine (PlayDetailsCor (text,timeout));
 	}
 
 	IEnumerator PlayDetailsCor(string[] text,float[] timeout)
@@ -149,12 +149,13 @@ public class InteractionManager : MonoBehaviour {
 			PlayText (new string[]{i.ToString()},new float[]{1f},4,true);
 			yield return new WaitForSeconds (1.5f);
 		}
+		PlayText (new string[]{"Turn me onn!!"},new float[]{2f},1,true);
 		StartScene ();
 	}
 
 	void OnCalibrationDone()
 	{
-		string[] text = new string[]{ "Okay,","", "All cool?","", "If not, press R or pinch for two seconds to recalibrate" };
+		string[] text = new string[]{ "Okay,","", "All cool?","", "If not, press R  any time to recalibrate" };
 		float[] timeout = new float[]{ 2,0.2f, 2,0.2f, 5 };
 		float t=PlayText (text,timeout);
 
@@ -187,6 +188,10 @@ public class InteractionManager : MonoBehaviour {
 			StopCoroutine (cooldownCoroutine);
 			cooldownCoroutine = null;
 		}
+		if (_detailsTextCor != null) {
+			StopCoroutine (_detailsTextCor);
+			_detailsTextCor= null;
+		}
 
 	}
 
@@ -213,28 +218,32 @@ public class InteractionManager : MonoBehaviour {
 
 		string[] text = new string[]{ 
 			"","This is The LightRoom (not Adobe's one)",
-			"", "Your face is tracked using WebCam for OffAxis rendering",
+			"","Your face is tracked using WebCam for OffAxis rendering",
 			"","You can add attractors by pinching",
 			"","You can reset any time using R button",
-			"", "Enjoy.." };
+
+			"", "Particles are GPU Instanced, and processed in the shader",
+			"", "Same goes for the walls",
+			"", "Further optimizations can be applied to reduce CPU overhead" 
+		};
 		float[] timeout = new float[]{ 
 			2,5,
 			0.2f,7,
 			0.2f,5,
 			0.2f,5,
-			0.2f,4
+
+			0.2f,4,
+			0.2f,3,
+			0.2f,5,
 		};
-		float t=PlayText (text,timeout);
 
-		PlayDetails (new string[]{ "", "Particles are GPU Instanced, and processed in the shader " },
-			new float[]{ t, 10 });
-
+		PlayDetails (text,timeout);
 	}
 
 
 	bool CheckReset()
 	{
-		return Input.GetKeyDown (KeyCode.R) || HandCalibrator.IsPinched && HandCalibrator.PinchTime>3 && HandCalibrator.CalibrationPointNumber>0;
+		return Input.GetKeyDown (KeyCode.R);// || HandCalibrator.IsPinched && HandCalibrator.PinchTime>3 && HandCalibrator.CalibrationPointNumber>0;
 	}
 
 	// Update is called once per frame
@@ -247,7 +256,7 @@ public class InteractionManager : MonoBehaviour {
 			break;
 		case State.Idle:
 			{
-				if (Input.GetKeyDown (KeyCode.R)) {
+				if (CheckReset()) {
 					Reset ();
 				}
 				break;
@@ -261,8 +270,12 @@ public class InteractionManager : MonoBehaviour {
 			_colorTween.target = 1 - _colorTween.target;
 		}
 
-		Color1.a = Color2.a=_currAlpha;
-		InstructionText.color = Color.Lerp (Color1, Color2, _colorTween.position);
+		//update instruction text color
+		{
+			var clr = Color.Lerp (Color1, Color2, _colorTween.position);
+			clr.a = _currAlpha;
+			InstructionText.color = clr;
+		}
 
 		_bgmVolume.Step ();
 		BGM.volume = _bgmVolume.position;

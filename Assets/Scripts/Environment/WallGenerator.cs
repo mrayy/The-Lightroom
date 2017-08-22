@@ -65,6 +65,7 @@ public class WallGenerator : MonoBehaviour {
 	void Start () {
 		_noise = UnityEngine.Random.value;
 		_noiseSpeed= UnityEngine.Random.value*0.1f+0.05f;
+
 	}
 
 	public void SpawnCubes()
@@ -169,9 +170,11 @@ public class WallGenerator : MonoBehaviour {
 	{
 		foreach (var c in _cubes) {
 			_dataMatrix1 [c.Index].r=c.Scale;
-			_dataMatrix1 [c.Index].g=(Config.H+ c.affectorHue)/2;
-			_dataMatrix1 [c.Index].b=c.Saturation;
-			_dataMatrix1 [c.Index].a=c.Lighting;
+			float h, s, v;
+			Color.RGBToHSV ((BaseColor + c.affectorColor) / 2, out h, out s, out v);
+			_dataMatrix1 [c.Index].g = h;//(Config.H+ c.affectorHue)/2;
+			_dataMatrix1 [c.Index].b=(c.Saturation+s)/2;
+			_dataMatrix1 [c.Index].a=(c.Lighting+v)/2;
 		}
 		_dataBuffer1.SetPixels(_dataMatrix1);
 		_dataBuffer1.Apply ();
@@ -199,8 +202,8 @@ public class WallGenerator : MonoBehaviour {
 		if (Paused)
 			return;
 
-		//Color.RGBToHSV (BaseColor, out Config.H, out Config.S,out  Config.V);
-		Config.H=Reaktion.Perlin.Noise(_noise);
+		Color.RGBToHSV (BaseColor, out Config.H, out Config.S,out  Config.V);
+		Config.H=Reaktion.Perlin.Noise(_noise)+0.5f;
 		_noise += Time.deltaTime*_noiseSpeed;
 		BaseColor= Color.HSVToRGB(Config.H,Config.S,Config.V);
 		foreach (var c in _cubes)

@@ -11,7 +11,7 @@ public class WallCubeBehaviour {
 	[Serializable]
 	public class WallConfigurations
 	{
-		[HideInInspector]
+		//[HideInInspector]
 		public float H,S,V;
 
 		public float spawnSpeed = 1.0f;
@@ -29,7 +29,7 @@ public class WallCubeBehaviour {
 
 
 
-	public float affectorHue;
+	public Color affectorColor;
 	public float Saturation=1.0f;
 	public float Lighting=0.0f;
 
@@ -86,8 +86,7 @@ public class WallCubeBehaviour {
 			{
 				float a=AttractorManager.Instance.CalculateAttraction (Position);
 				Attraction=_spring.Step (a);
-				float s, v;
-				Color.RGBToHSV(AttractorManager.Instance.CalculateAttractionColor (Position),out affectorHue,out s,out v);
+				affectorColor = AttractorManager.Instance.CalculateAttractionColor (Position);
 
 				float strength = Config.ClickAnimation.Evaluate (Attraction);
 				Scale = strength;
