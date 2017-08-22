@@ -2,14 +2,20 @@
 ![anim1](http://myamens.com/Uploads/TLR/TLR-intro.gif)
 
 This is an expermintal project created for the application process at Teamlab Japan.
-The concept of this room is the psudeo-immersion of visuals, sensory and interaction into a single space. The room consists of basic elements:
-- Affectors: audio/light generators that can be added by the user.
-- Walls: reflects the behaviour of the room based on the the affectors motion and colors. The shape of the room deforms following the attraction of the affectors.
-- Particles: emitted from the walls represented the effect of attraction towards the affectors.
+The concept of this room is the psudeo-immersion of visuals, sensory and interaction into a single space. This work aims to remove the boundries between the physical and virtual space, and to create an extension of the human interaction into that virtual space.
+
+The Lightroom consists of the following elements:
+- Attractors: audio/light emitters that can be added by the user.
+- Walls: reflects the behaviour of the room based on the the Attractors motion and colors. The shape of the room deforms following the attraction of the Attractors.
+- Particles: emitted from the walls represented the effect of attraction towards the Attractors.
 
 ![anim1](http://myamens.com/Uploads/TLR/TLR-particles.gif)
 
+Interactions:
+----------
 The perspective of the rooms is changed based on user's head position, which is tracked using a webcamera. The rendering is done using off-axis projection, simulating looking-through a window. 
+The user can interact with the lightroom by using his hands motion and gestures. Pinching allows the user can add new attractors, and a long pinch to remove an existing attractor in the room. 
+
 
 Requirements:
 --------
