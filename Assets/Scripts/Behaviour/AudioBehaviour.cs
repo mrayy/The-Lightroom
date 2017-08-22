@@ -19,7 +19,7 @@ public class AudioBehaviour : IBehaviour {
 	public float Note;
 	float[] _samples;
 
-	float _decay=1.0f;
+	public float _decay=0.0f;
 
 	ElementBehaviour _baseBehaviour;
 

@@ -35,6 +35,13 @@ public class EnvironmentHandler : MonoBehaviour {
 		}
 	}
 
+	public void TriggerSpace(float strength)
+	{
+		foreach (var w in _walls) {
+			w.SpawnCubes (strength);
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
 		

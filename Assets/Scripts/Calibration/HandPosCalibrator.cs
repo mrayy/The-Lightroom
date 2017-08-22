@@ -4,7 +4,7 @@ using UnityEngine;
 using Leap.Unity;
 using Leap;
 
-public class HandPosCalibrator : MonoBehaviour {
+public class HandPosCalibrator : MonoBehaviour,IDependencyNode {
 	
 
 	public Vector2[] CalibrationPoints;
@@ -26,18 +26,27 @@ public class HandPosCalibrator : MonoBehaviour {
 	public CalibrationPoint CalibPoint;
 
 	public bool UseMouse=false;
-	public AbstractHoldDetector Hand;
+	public HandDetector Hand;
 	public Vector2 point;//For debugging
 	public Vector3 Pos;//For debugging
 
+	public UnityEngine.UI.Image HandDetectedImage;
+
 	float _lastTime;
 
+	bool _isPinchUp=false;
+
+	public bool IsPinchedUp {
+		get {
+			return _isPinchUp;
+		}
+	}
 	public bool IsPinched {
 		get {
 			if (UseMouse || Hand==null) {
 				return Input.GetMouseButtonDown (0);
 			} else
-				return Hand.IsHolding;
+				return Hand.IsPinched;
 		}
 	}
 	public Vector3 Position {
@@ -49,6 +58,27 @@ public class HandPosCalibrator : MonoBehaviour {
 		}
 	}
 
+	public bool BothTriggered
+	{
+		get{
+			if (UseMouse || Hand==null) {
+				return Input.GetMouseButtonDown (1);
+			} else
+				return Hand.BothTriggered;
+		}
+	}
+
+	public bool IsDetected
+	{
+		get{
+
+			if (UseMouse || Hand == null) {
+				return true;
+			} else {
+				return Hand.IsDetected;
+			}
+		}
+	}
 
 
 	public bool IsCalibrated {
@@ -71,10 +101,15 @@ public class HandPosCalibrator : MonoBehaviour {
 		get{ return _CurrCalibPoint; }
 	}
 
+	public void OnDependencyStart(DependencyRoot root)
+	{
+		bool.TryParse(SettingsHolder.Instance.GetValue("Simulation","NoLeapmotion","false"),out UseMouse);
+	}
 	// Use this for initialization
 	void Start () {
 		Poses = new Vector3[CalibrationPoints.Length];
 		Reset ();
+		SettingsHolder.Instance.AddDependencyNode (this);
 	}
 
 	
@@ -84,7 +119,6 @@ public class HandPosCalibrator : MonoBehaviour {
 
 		if (IsPinched) {
 			if (!_isPinched) {
-				Debug.Log ("Pinched");
 				NextPoint ( Position);
 				if (_CurrCalibPoint == CalibrationPoints.Length) {
 					if (!Calibrate ()) {
@@ -101,12 +135,21 @@ public class HandPosCalibrator : MonoBehaviour {
 				Reset ();
 			}*/
 		} else {
+			if (_isPinched)
+				_isPinchUp = true;
+			else
+				_isPinchUp = false;
 			_isPinched = false;
+			_lastTime = Time.time;
 		}
 
 		//if (Input.GetKeyDown (KeyCode.R)) {
 		//	Reset ();
 		//}
+
+		if (HandDetectedImage != null) {
+			HandDetectedImage.enabled=IsDetected;
+		}
 
 		if (IsCalibrated) {
 			point = _regData.GetPoint (_calibPlane.ProjectPoint2D (Position));

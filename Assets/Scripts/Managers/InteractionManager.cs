@@ -51,7 +51,7 @@ public class InteractionManager : MonoBehaviour {
 		}
 
 
-		PlayDetails (new string[]{ "", "Don't get distracted by mee","", "The LightRoom by MHD Yamen Saraiji ","","Made for TeamLab career application, Interaction Design","","August 2017" },
+		PlayDetails (new string[]{ "", "Don't get distracted by me","", "The LightRoom by MHD Yamen Saraiji ","","Made for TeamLab career application, Interaction Design","","August 2017" },
 			new float[]{ 2,4,2, 4,0.5f,5,0.5f,5 });
 	}
 
@@ -149,20 +149,21 @@ public class InteractionManager : MonoBehaviour {
 			PlayText (new string[]{i.ToString()},new float[]{1f},4,true);
 			yield return new WaitForSeconds (1.5f);
 		}
-		PlayText (new string[]{"Turn me onn!!"},new float[]{2f},1,true);
+		//PlayText (new string[]{"Turn me onn!!"},new float[]{2f},1,true);
 		StartScene ();
 	}
 
 	void OnCalibrationDone()
 	{
-		string[] text = new string[]{ "Okay,","", "All cool?","", "If not, press R  any time to recalibrate" };
-		float[] timeout = new float[]{ 2,0.2f, 2,0.2f, 5 };
+		string[] text = new string[]{ "","All good?","", "If not, press R any time to recalibrate" };
+		float[] timeout = new float[]{ 0.5f,2,0.2f, 5 };
 		float t=PlayText (text,timeout);
 
 		cooldownCoroutine=StartCoroutine(StartSceneCooldown(t));
 	}
 	void OnCalibrationReset(bool failure)
 	{
+		PlayDetails (new string[]{ "" }, new float[]{ 0 });
 		if (!_firstCalibration) {
 			string[] text;
 			float[] timeout;
@@ -182,15 +183,12 @@ public class InteractionManager : MonoBehaviour {
 		targetCamera.Reset ();
 		targetCamera.StopBehaviour ();
 		Environment.Reset ();
+		AttractorManager.Instance.IsActive = false;
 		_currentState = State.Calibration;
 		envRoot.SetActive (false);
 		if (cooldownCoroutine != null) {
 			StopCoroutine (cooldownCoroutine);
 			cooldownCoroutine = null;
-		}
-		if (_detailsTextCor != null) {
-			StopCoroutine (_detailsTextCor);
-			_detailsTextCor= null;
 		}
 
 	}
@@ -212,32 +210,47 @@ public class InteractionManager : MonoBehaviour {
 		envRoot.SetActive (true);
 		targetCamera.StartBehaviour ();
 		Environment.StartEnvironment ();
+		AttractorManager.Instance.IsActive = true;
 		_currentState = State.Idle;
 
 		Volume.TargetVolume = 0.8f;
 
 		string[] text = new string[]{ 
 			"","This is The LightRoom (not Adobe's one)",
-			"","Your face is tracked using WebCam for OffAxis rendering",
 			"","You can add attractors by pinching",
+			"","Long pinch to remove an attractor",
+
 			"","You can reset any time using R button",
 
+			"","Enjoy.",
+		};
+		float[] timeout = new float[] { 
+			2, 5,
+			0.2f, 7,
+			0.2f, 5,
+			0.2f, 5,
+
+			2.0f, 5,
+
+			2.0f, 2,
+		};
+		PlayText (text,timeout);
+			
+		text = new string[] {
 			"", "Particles are GPU Instanced, and processed in the shader",
 			"", "Same goes for the walls",
-			"", "Further optimizations can be applied to reduce CPU overhead" 
+			"", "Further optimizations can be applied to reduce CPU overhead" ,
+			"", "Your face is tracked using the webcam to create off-axis projection" 
 		};
-		float[] timeout = new float[]{ 
-			2,5,
-			0.2f,7,
-			0.2f,5,
-			0.2f,5,
+		timeout=new float[] {
 
-			0.2f,4,
+			2.0f,4,
 			0.2f,3,
 			0.2f,5,
+			2f,5,
 		};
-
 		PlayDetails (text,timeout);
+
 	}
 
 

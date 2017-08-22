@@ -18,6 +18,11 @@
 *.booproj
 #*.*.meta
 
+*.mp4
+
+/Assets/StreamingAssets/
+/Assets/Libraries/FFmpegOut/
+
 # Unity3D generated meta files
 #*.pidb.meta
 

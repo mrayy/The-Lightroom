@@ -3,15 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsHolder : MonoBehaviour 
+public class SettingsHolder : DependencyRoot 
 {
 	static SettingsHolder _Instance;
 
 	public bool Debug=false;
 
+	public INIParser _settings;
 
 	public Camera activeCamera;
 
+	public INIParser Settings
+	{
+		get{
+			return _settings;
+		}
+	}
 
 	public static SettingsHolder Instance
 	{
@@ -22,12 +29,18 @@ public class SettingsHolder : MonoBehaviour
 		}
 	}
 	// Use this for initialization
-	void Start () {
+	protected override void Start () {
 		_Instance = this;
+		_settings = new INIParser ();
+		_settings.Open (Application.dataPath+"\\Data\\Settings.ini");
 
-
+		base.Start ();
 	}
-	
+
+	public string GetValue(string cat,string name,string def)
+	{
+		return _settings.ReadValue (cat, name,def);
+	}
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.F9)) {

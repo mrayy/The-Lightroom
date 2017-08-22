@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Flask;
 
-public class CameraTrackerBehaviour : IBehaviour {
+public class CameraTrackerBehaviour : IBehaviour,IDependencyNode {
 
 	public Vector3 Gain=new Vector3(1,1,1);
 	public Vector3 Initial;
@@ -26,11 +26,16 @@ public class CameraTrackerBehaviour : IBehaviour {
 
 	DTween _animTween = new DTween (0, 2);
 
+	public void OnDependencyStart(DependencyRoot root)
+	{
+		bool.TryParse(SettingsHolder.Instance.GetValue("Simulation","NoWebcam","false"),out UseMouse);
+	}
 
 	// Use this for initialization
 	void Start () {
 		Offset = transform.localPosition;
 		Offset.z = MinZ;
+		SettingsHolder.Instance.AddDependencyNode (this);
 	}
 
 	bool _updateAnimation()

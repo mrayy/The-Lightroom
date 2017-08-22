@@ -5,7 +5,7 @@ using System.Threading;
 using UnityEngine.UI;
 using System;
 
-public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
+public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement,IDependencyNode {
 
 	public int index;
 	public int Width=640,Height=480;
@@ -30,6 +30,8 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 	GstImageInfo _faceImage;
 	public Texture2D BlitImage;
 	public Texture2D FaceImage;
+
+	public Image FaceDetectedImg;
 
 	public RawImage target;
 
@@ -57,6 +59,16 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 	public int Margin=50;
 
 
+	public void OnDependencyStart(DependencyRoot root)
+	{
+		int.TryParse(SettingsHolder.Instance.GetValue("WebCamera","Index",index.ToString()),out index);
+		int.TryParse(SettingsHolder.Instance.GetValue("WebCamera","Width",Width.ToString()),out Width);
+		int.TryParse(SettingsHolder.Instance.GetValue("WebCamera","Height",Height.ToString()),out Height);
+
+		_capDev.Open (index);
+		_capDev.SetSize (Width, Height);
+		_imageGrabber.Start ();
+	}
 	// Use this for initialization
 	void Start () {
 		_capDev = new UnityOpenCVVideoCaptureAPI ();
@@ -66,8 +78,6 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 		_image=new GstImageInfo();
 		_faceImage=new GstImageInfo();
 
-		_capDev.Open (index);
-		_capDev.SetSize (Width, Height);
 
 		BlitImage = new Texture2D (1, 1);
 		FaceImage = new Texture2D (1, 1);
@@ -76,7 +86,9 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 
 
 		_imageGrabber = new Thread (new ThreadStart (ImageGrabberThread));
-		_imageGrabber.Start ();
+
+		SettingsHolder.Instance.AddDependencyNode (this);
+
 
 		if(Debugger!=null)
 			Debugger.AddDebugElement (this);
@@ -85,8 +97,6 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 	Rect _face;
 	void ImageGrabberThread()
 	{
-		Vector2 sz;
-		int c;
 		while (!_isDone) {
 			if (!_captured) {
 				_capDev.ToImage (_image,0,0,Width,Height);
@@ -99,21 +109,15 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 				//}
 				if (faces.Count > 0) {
 					_face = faces [0];
-
-					if (_face != null) {
-
-						int x = (int)(Mathf.Max (0, _face.x  - Margin));
-						int y = (int)(Mathf.Max (0, _face.y - Margin));
-						int w = (int)(Mathf.Min (Width - x, _face.width  + Margin * 2));
-						int h = (int)(Mathf.Min (Height - y, _face.height  + Margin * 2));
-						FaceRect.Set (x, y, w, h);
-						_facePos.AddSample (new Vector3 (x, y, w));
-						_capDev.ToImage (_faceImage, x, y, w, h);
-						_faceCaptured = true;
-						_faceDetected = true;
-					} else {
-						_faceDetected = false;
-					}
+					int x = (int)(Mathf.Max (0, _face.x  - Margin));
+					int y = (int)(Mathf.Max (0, _face.y - Margin));
+					int w = (int)(Mathf.Min (Width - x, _face.width  + Margin * 2));
+					int h = (int)(Mathf.Min (Height - y, _face.height  + Margin * 2));
+					FaceRect.Set (x, y, w, h);
+					_facePos.AddSample (new Vector3 (x, y, w));
+					_capDev.ToImage (_faceImage, x, y, w, h);
+					_faceCaptured = true;
+					_faceDetected = true;
 				} else {
 					_faceDetected = false;
 				}
@@ -143,6 +147,10 @@ public class VideoCapture : MonoBehaviour,DebugInterface.IDebugElement {
 			if(target!=null)
 				target.texture = BlitImage;
 			_captured = false;
+		}
+
+		if (FaceDetectedImg != null) {
+			FaceDetectedImg.enabled = _faceDetected;
 		}
 
 	}

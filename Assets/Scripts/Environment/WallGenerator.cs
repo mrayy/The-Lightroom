@@ -68,12 +68,12 @@ public class WallGenerator : MonoBehaviour {
 
 	}
 
-	public void SpawnCubes()
+	public void SpawnCubes(float strength=1)
 	{
 		float maxDistance = TilesCount*TileSize / 2.0f;
 		foreach (var c in _cubes) {
 			float dist = (c.Position-transform.position) .magnitude / maxDistance;
-			c.OnSpawn (-dist);
+			c.OnSpawn (-dist*strength);
 		}
 	}
 

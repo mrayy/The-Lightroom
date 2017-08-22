@@ -64,12 +64,14 @@ public class ParticleEffector : MonoBehaviour {
 
 			var attractors=AttractorManager.Instance.CalculateAttractionVectors (pos);
 
-			foreach (var a in attractors) {
-				float len = a.sqrMagnitude;
-				if (len < 1) {
-					len = Mathf.Sqrt (len);
+			if (attractors != null) {
+				foreach (var a in attractors) {
+					float len = a.sqrMagnitude;
+					if (len < 1) {
+						len = Mathf.Sqrt (len);
 
-					pos -= 0.5f * a * Time.deltaTime/len;
+						pos -= 0.5f * a * Time.deltaTime / len;
+					}
 				}
 			}
 
