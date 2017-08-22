@@ -14,7 +14,7 @@ The perspective of the rooms is changed based on user's head position, which is 
 Requirements:
 --------
 - Leapmotion
-- USB Webcamera
+- USB Webcamera: Camera index should be set by changing "Index" value in the settings file found in: Data\Settings.ini
 - Projector (Optional)
 
 Tested using the following PC: OS Windows 10 Pro, Intel(R) Core(TM) i7-6700, 16GB RAM, NVidia GeForce GTX 1080
@@ -25,7 +25,7 @@ Plugins Used:
 - Leapmotion SDK
 
 
-Credits:
+External repos:
 --------
 - Keijiro Takahashi's handful math utilities: https://github.com/keijiro  (DTween, Perlin)
-
+- Keijiro Takahashi's Audio Spectrum utility: https://github.com/keijiro/unity-audio-spectrum
