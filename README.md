@@ -11,6 +11,13 @@ The concept of this room is the psudeo-immersion of visuals, sensory and interac
 
 The perspective of the rooms is changed based on user's head position, which is tracked using a webcamera. The rendering is done using off-axis projection, simulating looking-through a window. 
 
+Requirements:
+--------
+- Leapmotion
+- USB Webcamera
+- Projector (Optional)
+
+Tested using the following PC: OS Windows 10 Pro, Intel(R) Core(TM) i7-6700, 16GB RAM, NVidia GeForce GTX 1080
 
 Plugins Used:
 --------
