@@ -13,11 +13,18 @@ The perspective of the rooms is changed based on user's head position, which is 
 
 Requirements:
 --------
-- Leapmotion
+- Leapmotion (In case not available, then set property value "NoLeapmotion" to "true" in the settings file found in: Data\Settings.ini)
 - USB Webcamera: Camera index should be set by changing "Index" value in the settings file found in: Data\Settings.ini
+   (In case not available, then set property value "NoWebcam" to "true" in the settings file found in: Data\Settings.ini)
 - Projector (Optional)
 
 Tested using the following PC: OS Windows 10 Pro, Intel(R) Core(TM) i7-6700, 16GB RAM, NVidia GeForce GTX 1080
+
+
+How it works:
+-------
+- The-Lightroom starts by calibrating the placement of the leapmotion using 3 points calibration. The user calibrates by pointing into the points and pinching his hand. If the calibration successeded, then the user should be able to point freely in the 2D space.
+- The webcam tracks user's face in order to adjust camera's location. The generated effect is an off-axis projection.
 
 Plugins Used:
 --------
