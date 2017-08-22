@@ -16,10 +16,20 @@ Requirements:
 - Leapmotion (In case not available, then set property value "NoLeapmotion" to "true" in the settings file found in: Data\Settings.ini)
 - USB Webcamera: Camera index should be set by changing "Index" value in the settings file found in: Data\Settings.ini
    (In case not available, then set property value "NoWebcam" to "true" in the settings file found in: Data\Settings.ini)
-- Projector (Optional)
+- Projector (Optional, better for immersion)
+
+Setup:
+-----
+Place the webcamera and leapmotion on front of the user at a table. The webcamera should be pointing to the user's face. 
+If projector was used, then the user's face should be lit enough so the camera can detect his face. To check if the camera is tracking correctly, press F9 on keyboard to show debug information. The face icon on the bottom left corner should appear too if the face is being detected. 
 
 Tested using the following PC: OS Windows 10 Pro, Intel(R) Core(TM) i7-6700, 16GB RAM, NVidia GeForce GTX 1080
 
+Running:
+-----
+You can download a release version from github:
+https://github.com/mrayy/The-Lightroom/releases
+or you can run it in Unity3D (tested on Unity3D 5.6.2f1).
 
 How it works:
 -------
