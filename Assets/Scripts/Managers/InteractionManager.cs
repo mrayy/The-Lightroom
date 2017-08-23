@@ -163,7 +163,6 @@ public class InteractionManager : MonoBehaviour {
 	}
 	void OnCalibrationReset(bool failure)
 	{
-		PlayDetails (new string[]{ "" }, new float[]{ 0 });
 		if (!_firstCalibration) {
 			string[] text;
 			float[] timeout;
